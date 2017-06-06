@@ -2,21 +2,18 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "nodejs-example",
+    "name": "deni",
     "annotations": {
       "openshift.io/display-name": "Node.js",
-      "description": "An example Node.js application with no database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/nodejs-ex/blob/master/README.md.",
+      "description": "Experimental app",
       "tags": "quickstart,nodejs",
       "iconClass": "icon-nodejs",
-      "template.openshift.io/long-description": "This template defines resources needed to develop a NodeJS application, including a build configuration and application deployment configuration.  It does not include a database.",
-      "template.openshift.io/provider-display-name": "Red Hat, Inc.",
-      "template.openshift.io/documentation-url": "https://github.com/openshift/nodejs-ex",
-      "template.openshift.io/support-url": "https://access.redhat.com"
+      "template.openshift.io/documentation-url": "https://github.com/Sjoerddo/deni"
     }
   },
-  "message": "The following service(s) have been created in your project: ${NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/openshift/nodejs-ex/blob/master/README.md.",
+  "message": "The following service(s) have been created in your project: ${NAME}.",
   "labels": {
-    "template": "nodejs-example"
+    "template": "nodejs-app"
   },
   "objects": [
     {
@@ -89,12 +86,12 @@
             "from": {
               "kind": "ImageStreamTag",
               "namespace": "${NAMESPACE}",
-              "name": "nodejs:6"
+              "name": "nodejs:4"
             },
-            "env":  [
+            "env": [
               {
-                  "name": "NPM_MIRROR",
-                  "value": "${NPM_MIRROR}"
+                "name": "NPM_MIRROR",
+                "value": "${NPM_MIRROR}"
               }
             ]
           }
@@ -175,7 +172,7 @@
           "spec": {
             "containers": [
               {
-                "name": "nodejs-example",
+                "name": "nodejs-app",
                 "image": " ",
                 "ports": [
                   {
@@ -191,24 +188,18 @@
                   }
                 },
                 "livenessProbe": {
-                    "timeoutSeconds": 3,
-                    "initialDelaySeconds": 30,
-                    "httpGet": {
-                        "path": "/",
-                        "port": 8080
-                    }
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "httpGet": {
+                    "path": "/",
+                    "port": 8080
+                  }
                 },
+                "env": [],
                 "resources": {
-                    "limits": {
-                        "memory": "${MEMORY_LIMIT}"
-                    }
-                },
-                "env": [
-                ],
-                "resources": {
-		      "limits": {
-			  "memory": "${MEMORY_LIMIT}"
-		      }
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
                 }
               }
             ]
