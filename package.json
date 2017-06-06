@@ -1,0 +1,21 @@
+{
+  "name": "deni-node",
+  "version": "0.0.1",
+  "description": "Node.js sample app",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "object-assign": "4.1.0"
+  },
+  "engine": {
+    "node": "*",
+    "npm": "*"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sjoerddo/deni.git"
+  }
+}
