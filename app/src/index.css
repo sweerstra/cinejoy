@@ -68,19 +68,19 @@ span {
     margin-bottom: 10px;
 }
 
-.nav input[type=text] { -webkit-appearance: none; -moz-appearance: none; appearance: none; background: #fff none; border-radius: 4px; border: 1px solid #bfcbd9; box-sizing: border-box; color: #1f2d3d; display: block; font-size: inherit; height: 36px; line-height: 1; outline: none; padding: 3px 10px; transition: border-color .2s cubic-bezier(.645, .045, .355, 1); width: 100% }
+nav form input { -webkit-appearance: none; -moz-appearance: none; appearance: none; background: #fff none; border-radius: 4px; border: 1px solid #bfcbd9; box-sizing: border-box; color: #1f2d3d; display: block; font-size: inherit; height: 36px; line-height: 1; outline: none; padding: 3px 10px; transition: border-color .2s cubic-bezier(.645, .045, .355, 1); width: 100% }
 
-.nav input[type=text]::placeholder { color: #97a8be }
+nav form input::placeholder { color: #97a8be }
 
-.nav input[type=text]:focus { outline: none; border-color: #394EFF }
+nav form input:focus { outline: none; border-color: #394EFF }
 
-.nav input { margin-right: 10px; }
+nav form input { margin-right: 10px; }
 
 button { display: inline-block; line-height: 1; white-space: nowrap; cursor: pointer; background: #fff; border: 1px solid #bfcbd9; color: #1f2d3d; -webkit-appearance: none; text-align: center; box-sizing: border-box; outline: none; margin: 0; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; padding: 10px 15px; font-size: 14px; border-radius: 4px }
 
-.nav button + .nav button { margin-left: 10px; }
+nav form button + nav form button { margin-left: 10px; }
 
-button:focus, .nav button:hover { color: #394EFF; border-color: #394EFF }
+button:focus, nav form button:hover { color: #394EFF; border-color: #394EFF }
 
 button:active { color: #5064ff; border-color: #5064ff; outline: none }
 
@@ -88,12 +88,12 @@ button::-moz-focus-inner { border: 0 }
 
 button { width: 120px; }
 
-.nav a {
+nav form a {
     color: #394EFF;
     text-decoration: none;
 }
 
-.nav #refresh {
+nav form #refresh {
     margin-left: 80px;
     display: none;
 }
@@ -197,24 +197,24 @@ button { width: 120px; }
 
 /* ----------------- popup ----------------- */
 
-.nav {
+nav form {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 20px 4% 20px 4%;
 }
 
-.nav #input-suggestion {
+nav form #input-suggestion {
     width: 300px !important;
     display: inline;
 }
 
-.nav #input-img {
+nav form #input-img {
     width: 500px !important;
     display: inline;
 }
 
-.nav label {
+nav form label {
     margin-right: 10px;
 }
 
@@ -224,12 +224,12 @@ button { width: 120px; }
 }
 
 @media (max-width: 502px) {
-    .nav #input-suggestion, .nav #input-img {
+    nav form #input-suggestion, nav form #input-img {
         width: 100% !important;
         margin-bottom: 10px;
     }
 
-    .nav button, .nav input {
+    nav form button, nav form input {
         display: none !important;
     }
 
