@@ -1,10 +1,9 @@
 class Fetch {
     _request(url, options) {
         return fetch(url, options)
-                .then(Fetch._checkStatus)
-                .then(Fetch._parseResponse)
-                .catch(err = > err;
-    )
+            .then(Fetch._checkStatus)
+            .then(Fetch._parseResponse)
+            .catch(err => err);
     };
 
     get(url) {

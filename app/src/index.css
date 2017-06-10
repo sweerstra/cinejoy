@@ -12,7 +12,7 @@ html, body {
     margin: 0;
 }
 
-.row {
+.item {
     height: 545px;
     padding: 20px 0;
     display: flex;
@@ -244,14 +244,14 @@ button { width: 120px; }
     background-color: #394EFF;
 }
 
-.row .btn-reserve {
+.item .btn-reserve {
     padding: 6px 15px;
     line-height: 0;
     border-radius: 4px;
     text-decoration: none;
 }
 
-.row .btn-reserve:hover {
+.item .btn-reserve:hover {
     border: 1px solid white;
     padding: 7px 15px;
     cursor: pointer;

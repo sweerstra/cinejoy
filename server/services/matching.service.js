@@ -1,7 +1,7 @@
 const itemService = require('./item.service');
 const watchService = require('./watch.service');
 const scheduleService = require('./schedule.service');
-const sortByDateString = require('../utils/sort-by-date-string');
+const sortByDateString = require('../utils/sortByDateString');
 Object.assign = require('object-assign');
 
 module.exports = {

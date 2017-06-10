@@ -1,7 +1,6 @@
-const ABSOLUTE_PATH = 'https://i321720.iris.fhict.nl/draait-er-nog-iets';
+const SERVER_PATH = 'http://deni-deni-node-app.1d35.starter-us-east-1.openshiftapps.com/';
+const LOCAL_PATH = 'http://localhost:8080/';
 
-export const EUROSCOOP_SCRAPE = ABSOLUTE_PATH + '/src/api/euroscoop_scrape.php';
-export const TRAKT_SCRAPE = ABSOLUTE_PATH + '/src/api/trakt.php';
-export const TIMELINE_SCRAPE = ABSOLUTE_PATH + '/src/api/euroscoop_schedule_scrape.php?target=';
-export const TRAKT_POSTER_SCRAPE = ABSOLUTE_PATH + '/src/api/trakt_poster.php?target=';
-export const SUGGESTIONS = 'https://draait-er-nog-iets.firebaseio.com/suggestions/';
+export const MATCHING_TITLES = /*SERVER_PATH*/LOCAL_PATH + 'titles';
+export const TIMELINE_SCRAPE = SERVER_PATH + 'schedule?link=';
+export const TRAKT_POSTER_SCRAPE = SERVER_PATH + '/src/api/trakt_poster.php?target=';
