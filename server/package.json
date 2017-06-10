@@ -4,6 +4,7 @@
   "description": "Node.js sample app",
   "main": "server.js",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.1",
     "express": "^4.13.4",
     "htmlparser2": "^3.9.2",
     "node-fetch": "^1.7.1",
