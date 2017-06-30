@@ -39,12 +39,3 @@ function matchWithAvailable(items, toPopulate, watchlistItem) {
         }
     });
 }
-
-function addReservationLinks(matches) {
-    console.log('MATCHES', matches);
-    return Promise.all(matches.map((match) => {
-        return scheduleService.getCorrectTimeLink(encodeURIComponent(match.link)).then((reservation) => {
-            return Object.assign(match, { reservation });
-        });
-    }));
-}

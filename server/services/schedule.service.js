@@ -10,7 +10,7 @@ module.exports = {
 
                 if (SCHEDULE_DAYS.some(day => scheduleName.indexOf(day) !== -1)) {
                     var checkoutLink = getOptimizedCheckoutLink(schedule, minTime || 1900);
-                    return Promise.all(createReservationLink(checkoutLink));
+                    return Promise.resolve(createReservationLink(checkoutLink));
                 }
             }
         });
@@ -19,7 +19,7 @@ module.exports = {
 
 const SCHEDULE_DAYS = ['vrijdag', 'zaterdag', 'maandag'];
 
-function getOptimizedCheckoutLink(schedule, minTime) {
+function getOptimizedCheckoutLink (schedule, minTime) {
     const timeslots = schedule.timeslots.reverse();
     const length = timeslots.length;
 
@@ -32,13 +32,13 @@ function getOptimizedCheckoutLink(schedule, minTime) {
     }
 }
 
-function createReservationLink(url) {
+function createReservationLink (url) {
     if (!url) return null;
     const pop = url.split('/').pop();
     return `http://tilburg.euroscoop.nl/Reservation.asp?WCI=templateLogin&WCE=&Vorst=${pop}&JAVA=true`;
 }
 
-function getScheduleScript(url) {
+function getScheduleScript (url) {
     const KEYWORD = 'scheduleData';
     return request.getHtml(url).then((html) => {
         const $ = cheerio.load(html);

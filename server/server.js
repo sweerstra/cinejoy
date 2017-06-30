@@ -17,17 +17,25 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'views')));
 
-app.get('/', (req, res) => {
+function redirectSec (req, res, next) {
+    if (req.headers['x-forwarded-proto'] === 'http') {
+        res.redirect('https://' + req.headers.host + req.path);
+    } else {
+        return next();
+    }
+}
+
+app.get('/', redirectSec, (req, res) => {
     res.render('index.html');
 });
 
-app.get('/titles', (req, res) => {
+app.get('/titles', redirectSec, (req, res) => {
     matchingService.getMatchingTitles().then((titles) => {
         res.send(titles);
     });
 });
 
-app.get('/schedule', (req, res) => {
+app.get('/schedule', redirectSec, (req, res) => {
     const url = req.query.link;
     const minTime = +req.query.time;
 
