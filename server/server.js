@@ -12,30 +12,27 @@ const ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    next();
-});
 
-app.use(express.static(path.join(__dirname, 'views')));
-
-function redirectSec (req, res, next) {
     if (req.headers['x-forwarded-proto'] === 'http') {
         res.redirect('https://' + req.headers.host + req.path);
     } else {
         return next();
     }
-}
+});
 
-app.get('/', redirectSec, (req, res) => {
+app.use(express.static(path.join(__dirname, 'views')));
+
+app.get('/', (req, res) => {
     res.render('index.html');
 });
 
-app.get('/titles', redirectSec, (req, res) => {
+app.get('/titles', (req, res) => {
     matchingService.getMatchingTitles().then((titles) => {
         res.send(titles);
     });
 });
 
-app.get('/schedule', redirectSec, (req, res) => {
+app.get('/schedule', (req, res) => {
     const url = req.query.link;
     const minTime = +req.query.time;
 
