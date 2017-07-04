@@ -12,12 +12,7 @@ const ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    if (req.headers['x-forwarded-proto'] === 'http') {
-        res.redirect('https://' + req.headers.host + req.path);
-    } else {
-        return next();
-    }
+    next();
 });
 
 app.use(express.static(path.join(__dirname, 'views')));
