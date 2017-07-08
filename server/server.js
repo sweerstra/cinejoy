@@ -29,7 +29,12 @@ app.get('/titles', (req, res) => {
 
 app.get('/schedule', (req, res) => {
     const url = req.query.link;
-    const minTime = +req.query.time;
+
+    if (url === undefined) {
+        res.send('No \'link\' parameter supplied.');
+    }
+
+    const minTime = parseInt(req.query.time, 10);
 
     scheduleService.getCorrectTimeLink(url, minTime).then((link) => {
         res.send(link);
@@ -39,7 +44,11 @@ app.get('/schedule', (req, res) => {
 app.get('/schedules', (req, res) => {
     const url = req.query.link;
 
-    scheduleService.getSchedule(url).then((data) => {
+    if (url === undefined) {
+        res.send('No \'link\' parameter supplied.');
+    }
+
+    scheduleService.getScheduleData(url).then((data) => {
         res.send(data);
     });
 });

@@ -16,7 +16,7 @@ module.exports = {
         });
     },
 
-    getSchedule(link) {
+    getScheduleData(link) {
         return getScheduleScript(link).then((data) => {
             const schedule = [];
             data.forEach((day) => {
