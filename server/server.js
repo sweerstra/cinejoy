@@ -7,7 +7,7 @@ const scheduleService = require('./services/schedule.service');
 const matchingService = require('./services/matching.service');
 
 const port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
-const ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+const ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +33,14 @@ app.get('/schedule', (req, res) => {
 
     scheduleService.getCorrectTimeLink(url, minTime).then((link) => {
         res.send(link);
+    });
+});
+
+app.get('/schedules', (req, res) => {
+    const url = req.query.link;
+
+    scheduleService.getSchedule(url).then((data) => {
+        res.send(data);
     });
 });
 

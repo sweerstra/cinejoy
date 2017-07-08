@@ -2,17 +2,38 @@ const cheerio = require('cheerio');
 const request = require('../data/index.js');
 
 module.exports = {
-    getCorrectTimeLink(url, minTime) {
-        return getScheduleScript(url).then((schedules) => {
+    getCorrectTimeLink(link, minTime) {
+        return getScheduleScript(link).then((schedules) => {
             for (var i = 0; i < schedules.length; i++) {
                 const schedule = schedules[i];
                 const scheduleName = schedule.name;
 
                 if (SCHEDULE_DAYS.some(day => scheduleName.indexOf(day) !== -1)) {
-                    var checkoutLink = getOptimizedCheckoutLink(schedule, minTime || 1900);
+                    const checkoutLink = getOptimizedCheckoutLink(schedule, minTime || 1900)
                     return Promise.resolve(createReservationLink(checkoutLink));
                 }
             }
+        });
+    },
+
+    getSchedule(link) {
+        return getScheduleScript(link).then((data) => {
+            const schedule = [];
+            data.forEach((day) => {
+                const timeslots = day.timeslots;
+                const obj = { name: /*cutDay(*/day.name/*)*/, data: [] };
+                for (var i = 0; i < timeslots.length; i++) {
+                    if (day.active[i] === 1 && day.full[i] === 0) {
+                        obj.data.push({
+                            time: timeslots[i],
+                            link: createReservationLink(day.links[i])
+                        });
+                    }
+                }
+                schedule.push(obj);
+            });
+
+            return Promise.resolve(schedule);
         });
     }
 };
@@ -51,4 +72,8 @@ function getScheduleScript (url) {
             }
         }
     });
+}
+
+function cutDay (day) {
+    return day.split(' ').slice(1).join(' ');
 }
