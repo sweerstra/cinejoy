@@ -22,7 +22,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/titles', (req, res) => {
-    matchingService.getMatchingTitles().then((titles) => {
+    const user = req.query.user;
+    const list = req.query.list || 'watchlist';
+
+    if (user === undefined) {
+        res.status(422).send({ error: 'No \'user\' parameter supplied.' });
+    }
+
+    matchingService.getMatchingTitles(user, list).then((titles) => {
         res.send(titles);
     });
 });
@@ -31,7 +38,7 @@ app.get('/schedule', (req, res) => {
     const url = req.query.link;
 
     if (url === undefined) {
-        res.send('No \'link\' parameter supplied.');
+        res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
     const minTime = parseInt(req.query.time, 10);
@@ -45,7 +52,7 @@ app.get('/schedules', (req, res) => {
     const url = req.query.link;
 
     if (url === undefined) {
-        res.send('No \'link\' parameter supplied.');
+        res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
     scheduleService.getScheduleData(url).then((data) => {

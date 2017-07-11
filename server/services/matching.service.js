@@ -1,16 +1,14 @@
 const itemService = require('./item.service');
 const watchService = require('./watch.service');
-const scheduleService = require('./schedule.service');
 const sortByDateString = require('../utils/sortByDateString');
-Object.assign = require('object-assign');
 
 module.exports = {
-    getMatchingTitles() {
+    getMatchingTitles(user, list) {
         return itemService.getItems().then((items) => {
             const current = items.current;
             const expecting = items.expecting;
 
-            return watchService.getWatchlist().then((watchlist) => {
+            return watchService.getWatchlist(user, list).then((watchlist) => {
                 const currentMatches = [];
                 const expectingMatches = [];
 
@@ -25,7 +23,7 @@ module.exports = {
     }
 };
 
-function matchWithAvailable(items, toPopulate, watchlistItem) {
+function matchWithAvailable (items, toPopulate, watchlistItem) {
     const watchlistItemTitle = watchlistItem.title.toLowerCase();
 
     items.forEach((result) => {
