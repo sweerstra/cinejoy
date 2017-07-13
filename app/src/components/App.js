@@ -1,7 +1,8 @@
-import React, { Component } from "react";
-import NavForm from "./components/NavForm";
-import Items from "./components/Items";
-import "./App.css";
+import React, { Component } from 'react';
+import NavForm from './Form';
+import Items from './Items';
+import Suggestions from './Suggestions';
+import '../App.css';
 
 class App extends Component {
     render() {
@@ -9,6 +10,7 @@ class App extends Component {
             <div className="App">
                 <NavForm/>
                 <Items/>
+                <Suggestions/>
             </div>
         )
     };

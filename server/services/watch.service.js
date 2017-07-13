@@ -2,12 +2,11 @@ const cheerio = require('cheerio');
 const request = require('../data/index');
 
 module.exports = {
-    getWatchlist(user, list) {
-        const URL = determineLink(user, list);
+    getWatchlist(url) {
         const AFTERLINK = '.webp';
 
         return getSuggestions().then((suggestions) => {
-            return request.getHtml(URL).then((html) => {
+            return request.getHtml(url).then((html) => {
                 const $ = cheerio.load(html);
 
                 return $('.grid-item').map(function () {
@@ -35,14 +34,4 @@ function getSuggestions () {
     }).catch((err) => {
         console.log(err);
     });
-}
-
-function determineLink (user, list) {
-    const URL = 'https://trakt.tv/users';
-
-    if (list === 'watchlist') {
-        return URL + '/' + user + '/' + list;
-    } else {
-        return URL + '/' + user + '/lists/' + list;
-    }
 }
