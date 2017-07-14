@@ -46,9 +46,9 @@ app.get('/schedule', (req, res) => {
         .then(data => res.send(data));
 });
 
-app.get('/users', (req, res) => {
+app.get('/user/:name', (req, res) => {
     // is valid Trakt.tv username
-    const username = req.query.valid;
+    const username = req.params.name;
 
     if (username === undefined) {
         res.status(422).send({ error: 'No \'valid\' parameter supplied.' });
@@ -56,6 +56,13 @@ app.get('/users', (req, res) => {
 
     userService.isValidUser(username)
         .then(response => res.send({ response }));
+});
+
+app.get('/user/:name/lists', (req, res) => {
+    const username = req.params.name;
+
+    userService.getLists(username)
+        .then(data => res.send(data));
 });
 
 app.listen(PORT, IP);
