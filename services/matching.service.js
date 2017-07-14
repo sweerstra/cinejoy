@@ -17,23 +17,33 @@ module.exports = {
                     matchWithAvailable(expecting, expectingMatches, scrape);
                 });
 
-                return currentMatches.concat(sortByDateString(expectingMatches));
+                return removeDuplicateMatches(currentMatches.concat(sortByDateString(expectingMatches)));
             });
         });
     }
 };
 
-function matchWithAvailable (items, toPopulate, watchlistItem) {
-    const watchlistItemTitle = watchlistItem.title.toLowerCase();
+function matchWithAvailable (items, toPopulate, listItem) {
+    const listItemTitle = listItem.title.toLowerCase();
 
     items.forEach((result) => {
-        if (result.title.toLowerCase().indexOf(watchlistItemTitle) !== -1) {
+        if (result.title.toLowerCase().indexOf(listItemTitle) !== -1) {
             toPopulate.push({
                 title: result.title,
-                poster: watchlistItem.poster,
+                poster: listItem.poster,
                 release: result.release,
                 link: result.link
             });
         }
+    });
+}
+
+function removeDuplicateMatches (matches) {
+    return matches.filter((obj, pos, arr) => {
+        const titles = arr.map(mapObj => mapObj.title);
+        return !titles.some((someTitle) => {
+            const objTitle = obj.title;
+            return objTitle.indexOf(someTitle) !== -1 && objTitle.length !== someTitle.length;
+        });
     });
 }

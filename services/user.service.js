@@ -13,7 +13,7 @@ module.exports = {
                 const item = $(this);
                 return {
                     title: item.find('[itemprop="name"]').text(),
-                    poster: PRELINK + item.find('.user-name a').attr('href')
+                    link: PRELINK + item.find('.user-name a').attr('href')
                 };
             }).get()
         }).catch((err) => {
