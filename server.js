@@ -5,6 +5,7 @@ const path = require('path');
 
 const scheduleService = require('./services/schedule.service');
 const matchingService = require('./services/matching.service');
+const userService = require('./services/user.service');
 
 const PORT = 8080;
 const IP = '0.0.0.0';
@@ -43,6 +44,18 @@ app.get('/schedule', (req, res) => {
 
     scheduleService.getScheduleData(link)
         .then(data => res.send(data));
+});
+
+app.get('/users', (req, res) => {
+    // is valid Trakt.tv username
+    const username = req.query.valid;
+
+    if (username === undefined) {
+        res.status(422).send({ error: 'No \'valid\' parameter supplied.' });
+    }
+
+    userService.isValidUser(username)
+        .then(response => res.send({ response }));
 });
 
 app.listen(PORT, IP);
