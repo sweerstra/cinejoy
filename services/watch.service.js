@@ -2,7 +2,7 @@ const cheerio = require('cheerio');
 const request = require('../data/index');
 
 module.exports = {
-    getWatchlist(url) {
+    getList(url) {
         const AFTERLINK = '.webp';
 
         return getSuggestions().then((suggestions) => {

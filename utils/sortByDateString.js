@@ -19,7 +19,7 @@ const MONTHS = {
     'december': 'Dec'
 };
 
-function parseDateString(str) {
+function parseDateString (str) {
     const split = str.replace('Vanaf ', '').split(' ');
     return `${MONTHS[split[1]]} ${split[0]}, ${split[2]}`;
 }

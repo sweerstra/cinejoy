@@ -6,8 +6,8 @@ const path = require('path');
 const scheduleService = require('./services/schedule.service');
 const matchingService = require('./services/matching.service');
 
-const port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
-const ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+const PORT = 8080;
+const IP = '0.0.0.0';
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,45 +22,30 @@ app.get('/', (req, res) => {
 });
 
 app.get('/titles', (req, res) => {
-    const user = req.query.user;
-    const list = req.query.list || 'watchlist';
+    // link that points to Trakt.tv list
+    const link = req.query.link;
 
-    if (user === undefined) {
-        res.status(422).send({ error: 'No \'user\' parameter supplied.' });
+    if (link === undefined) {
+        res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
-    matchingService.getMatchingTitles(user, list).then((titles) => {
-        res.send(titles);
-    });
+    matchingService.getMatchingTitles(link)
+        .then(titles => res.send(titles));
 });
 
 app.get('/schedule', (req, res) => {
-    const url = req.query.link;
+    // link that points to title
+    const link = req.query.link;
 
-    if (url === undefined) {
+    if (link === undefined) {
         res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
-    const minTime = parseInt(req.query.time, 10);
-
-    scheduleService.getCorrectTimeLink(url, minTime).then((link) => {
-        res.send(link);
-    });
+    scheduleService.getScheduleData(link)
+        .then(data => res.send(data));
 });
 
-app.get('/schedules', (req, res) => {
-    const url = req.query.link;
-
-    if (url === undefined) {
-        res.status(422).send({ error: 'No \'link\' parameter supplied.' });
-    }
-
-    scheduleService.getScheduleData(url).then((data) => {
-        res.send(data);
-    });
-});
-
-app.listen(port, ip);
-console.log('Server running on http://%s:%s', ip, port);
+app.listen(PORT, IP);
+console.log('Server running on http://%s:%s', IP, PORT);
 
 module.exports = app;

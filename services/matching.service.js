@@ -3,12 +3,12 @@ const watchService = require('./watch.service');
 const sortByDateString = require('../utils/sortByDateString');
 
 module.exports = {
-    getMatchingTitles(user, list) {
+    getMatchingTitles(url) {
         return itemService.getItems().then((items) => {
             const current = items.current;
             const expecting = items.expecting;
 
-            return watchService.getWatchlist(user, list).then((watchlist) => {
+            return watchService.getList(url).then((watchlist) => {
                 const currentMatches = [];
                 const expectingMatches = [];
 
