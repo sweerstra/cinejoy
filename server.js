@@ -78,7 +78,7 @@ app.post('/poster', (req, res) => {
             if (result) {
                 suggestion.poster = result;
                 suggestionService.addSuggestion(suggestion)
-                    .then(response => res.send(response));
+                    .then(() => res.send(suggestion));
             } else {
                 res.send({ response: false });
             }
