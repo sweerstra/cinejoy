@@ -14,8 +14,7 @@ module.exports = {
     },
 
     postJson(url, data) {
-        return fetch(url,
-        {   
+        return fetch(url, {   
             method: 'POST',
             body: JSON.stringify(data)
         }).then((res) => {

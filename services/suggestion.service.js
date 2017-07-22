@@ -7,10 +7,11 @@ module.exports = {
         const parser = new Urlparser(poster);
 
         if (parser.isTrakt() && !parser.hasDotExtension()) {
-              return request.getHtml(poster).then((html) => {
-		        const $ = cheerio.load(html);
-		        return $('#info-wrapper .poster img.real').attr('data-original');
-		    });
+              return request.getHtml(poster)
+              	.then((html) => {
+			        const $ = cheerio.load(html);
+			        return $('#info-wrapper .poster img.real').attr('data-original');
+		    	});
         } 
 
         return poster;
