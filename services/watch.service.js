@@ -27,14 +27,12 @@ function getSuggestions () {
     const URL = 'https://draait-er-nog-iets.firebaseio.com/suggestions.json';
 
     return request.getJson(URL).then((suggestionsObj) => {
-        const keys = Object.keys(suggestionsObj);
+        if(!suggestionsObj) return [];
 
-        return keys.length > 0 
-            ? keys.map((key) => {
-                const obj = suggestionsObj[key];
-                return { title: obj.title, poster: obj.poster };
-            }) 
-            : [];
+        return Object.keys(suggestionsObj).map((key) => {
+            const obj = suggestionsObj[key];
+            return { title: obj.title, poster: obj.poster };
+        });
     }).catch((err) => {
         console.log(err);
     });
