@@ -3,7 +3,7 @@ const request = require('../data/index');
 
 module.exports = {
     getLists(username) {
-        const PRELINK = 'trakt.tv';
+        const PRELINK = 'https://trakt.tv';
         const url = 'https://trakt.tv/users/' + username + '/lists';
 
         return request.getHtml(url).then((html) => {

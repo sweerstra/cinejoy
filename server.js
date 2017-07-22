@@ -2,10 +2,12 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 const scheduleService = require('./services/schedule.service');
 const matchingService = require('./services/matching.service');
 const userService = require('./services/user.service');
+const suggestionService = require('./services/suggestion.service');
 
 const PORT = 8080;
 const IP = '0.0.0.0';
@@ -16,6 +18,8 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(express.static(path.join(__dirname, 'views')));
 
 app.get('/', (req, res) => {
@@ -63,6 +67,21 @@ app.get('/user/:name/lists', (req, res) => {
 
     userService.getLists(username)
         .then(data => res.send(data));
+});
+
+app.post('/poster', (req, res) => {
+    var suggestion = req.body;
+
+    suggestionService.getValidatedPoster(suggestion.poster)
+        .then((result) => {
+            if (result) {
+                suggestion.poster = result;
+                suggestionService.addSuggestion(suggestion)
+                    .then(response => res.send(response));
+            } else {
+                res.send({ response: false });
+            }
+        });
 });
 
 app.listen(PORT, IP);

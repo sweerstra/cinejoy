@@ -11,5 +11,15 @@ module.exports = {
         return fetch(url).then((res) => {
             return res.json();
         });
+    },
+
+    postJson(url, data) {
+        return fetch(url,
+        {   
+            method: 'POST',
+            body: JSON.stringify(data)
+        }).then((res) => {
+            return res.json();
+        });
     }
 };
