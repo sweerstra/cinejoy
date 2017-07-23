@@ -80,7 +80,7 @@ app.post('/poster', (req, res) => {
                 suggestionService.addSuggestion(suggestion)
                     .then(() => res.send(suggestion));
             } else {
-                res.send({ response: false });
+                res.status(400).send('Invalid poster');
             }
         });
 });

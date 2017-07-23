@@ -10,7 +10,7 @@ module.exports = {
               return request.getHtml(poster)
               	.then((html) => {
 			        const $ = cheerio.load(html);
-			        return $('#info-wrapper .poster img.real').attr('data-original');
+			        return $('#info-wrapper .poster img.real').attr('data-original') + '.webp';
 		    	});
         } 
 
