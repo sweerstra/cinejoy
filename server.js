@@ -30,12 +30,14 @@ app.get('/', (req, res) => {
 app.get('/titles', (req, res) => {
     // link that points to Trakt.tv list
     const link = req.query.link;
+    // if all indexOf matching titles should be included
+    const all = req.query.all;
 
     if (link === undefined) {
         res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
-    matchingService.getMatchingTitles(link)
+    matchingService.getMatchingTitles(link, all)
         .then(titles => res.send(titles));
 });
 

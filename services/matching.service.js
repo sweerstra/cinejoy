@@ -3,7 +3,7 @@ const watchService = require('./watch.service');
 const sortByDateString = require('../utils/sortByDateString');
 
 module.exports = {
-    getMatchingTitles(url) {
+    getMatchingTitles(url, all) {
         return itemService.getItems().then((items) => {
             const current = items.current;
             const expecting = items.expecting;
@@ -17,17 +17,17 @@ module.exports = {
                     matchWithAvailable(expecting, expectingMatches, scrape);
                 });
 
-                return removeDuplicateMatches(currentMatches.concat(sortByDateString(expectingMatches)));
+                const concatenated = currentMatches.concat(sortByDateString(expectingMatches));
+
+                return all ? concatenated : removeDuplicateMatches(concatenated);
             });
         });
     }
 };
 
 function matchWithAvailable (items, toPopulate, listItem) {
-    const listItemTitle = listItem.title.toLowerCase();
-
     items.forEach((result) => {
-        if (result.title.toLowerCase().indexOf(listItemTitle) !== -1) {
+        if (result.title.toLowerCase() === listItem.title.toLowerCase()) {
             toPopulate.push({
                 title: result.title,
                 poster: listItem.poster,
