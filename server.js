@@ -80,7 +80,11 @@ app.post('/poster', (req, res) => {
             if (result) {
                 suggestion.poster = result;
                 suggestionService.addSuggestion(suggestion)
-                    .then(() => res.send(suggestion));
+                    .then((added) => res.send({ 
+                        id: added.name, 
+                        title: suggestion.title,
+                        poster: suggestion.poster 
+                    }));
             } else {
                 res.status(400).send('Invalid poster');
             }
