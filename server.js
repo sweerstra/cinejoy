@@ -73,8 +73,9 @@ app.get('/user/:name/lists', (req, res) => {
         .then(data => res.send(data));
 });
 
-app.post('/poster', (req, res) => {
-    var suggestion = req.body;
+app.post('/poster/:username', (req, res) => {
+    const username = req.params.username;
+    const suggestion = req.body;
 
     suggestionService.getValidatedPoster(suggestion.poster)
         .then((result) => {
@@ -82,7 +83,7 @@ app.post('/poster', (req, res) => {
                 suggestion.poster = result;
             }
 
-            suggestionService.addSuggestion(suggestion)
+            suggestionService.addSuggestion(username, suggestion)
                 .then((added) => res.send({
                     id: added.name,
                     title: suggestion.title,

@@ -17,7 +17,7 @@ module.exports = {
         return Promise.resolve(poster);
     },
 
-    addSuggestion(suggestion) {
-        return request.postJson('https://draait-er-nog-iets.firebaseio.com/suggestions.json', suggestion);
+    addSuggestion(username, suggestion) {
+        return request.postJson(`https://draait-er-nog-iets.firebaseio.com/${username}/suggestions.json`, suggestion);
     }
 };
