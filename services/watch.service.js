@@ -2,10 +2,10 @@ const cheerio = require('cheerio');
 const request = require('../data/index');
 
 module.exports = {
-    getList(url) {
+    getList(username, url) {
         const AFTERLINK = '.webp';
 
-        return getSuggestions().then((suggestions) => {
+        return getSuggestions(username).then((suggestions) => {
             return request.getHtml(url).then((html) => {
                 const $ = cheerio.load(html);
 
@@ -23,11 +23,11 @@ module.exports = {
     }
 };
 
-function getSuggestions () {
-    const URL = 'https://draait-er-nog-iets.firebaseio.com/suggestions.json';
+function getSuggestions(username) {
+    const URL = 'https://draait-er-nog-iets.firebaseio.com/' + username + '/suggestions.json';
 
     return request.getJson(URL).then((suggestionsObj) => {
-        if(!suggestionsObj) return [];
+        if (!suggestionsObj) return [];
 
         return Object.keys(suggestionsObj).map((key) => {
             const obj = suggestionsObj[key];

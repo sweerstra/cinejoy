@@ -38,7 +38,9 @@ app.get('/titles', (req, res) => {
         res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
-    matchingService.getMatchingTitles(link, all)
+    const username = link.split('/')[4];
+
+    matchingService.getMatchingTitles(username, link, all)
         .then(titles => res.send(titles));
 });
 
