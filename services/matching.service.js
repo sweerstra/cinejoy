@@ -3,12 +3,12 @@ const watchService = require('./watch.service');
 const sortByDateString = require('../utils/sortByDateString');
 
 module.exports = {
-    getMatchingTitles(username, url, all) {
+    getMatchingTitles(url, username) {
         return itemService.getItems().then((items) => {
             const current = items.current;
             const expecting = items.expecting;
 
-            return watchService.getList(username, url).then((watchlist) => {
+            return watchService.getList(url, username).then((watchlist) => {
                 const currentMatches = [];
                 const expectingMatches = [];
 
@@ -17,15 +17,13 @@ module.exports = {
                     matchWithAvailable(expecting, expectingMatches, scrape);
                 });
 
-                const concatenated = currentMatches.concat(sortByDateString(expectingMatches));
-
-                return all ? concatenated : removeDuplicateMatches(concatenated);
+                return currentMatches.concat(sortByDateString(expectingMatches));
             });
         });
     }
 };
 
-function matchWithAvailable (items, toPopulate, listItem) {
+function matchWithAvailable(items, toPopulate, listItem) {
     items.forEach((result) => {
         if (result.title.toLowerCase() === listItem.title.toLowerCase()) {
             toPopulate.push({
@@ -35,15 +33,5 @@ function matchWithAvailable (items, toPopulate, listItem) {
                 link: result.link
             });
         }
-    });
-}
-
-function removeDuplicateMatches (matches) {
-    return matches.filter((obj, pos, arr) => {
-        const titles = arr.map(mapObj => mapObj.title);
-        return !titles.some((someTitle) => {
-            const objTitle = obj.title;
-            return objTitle.indexOf(someTitle) !== -1 && objTitle.length !== someTitle.length;
-        });
     });
 }

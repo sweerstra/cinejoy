@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
 
@@ -31,16 +30,19 @@ app.get('/', (req, res) => {
 app.get('/titles', (req, res) => {
     // link that points to Trakt.tv list
     const link = req.query.link;
-    // if all indexOf matching titles should be included
-    const all = req.query.all;
+
+    // username to use for suggestions
+    const username = req.query.username;
 
     if (link === undefined) {
         res.status(422).send({ error: 'No \'link\' parameter supplied.' });
     }
 
-    const username = link.split('/')[4];
+    if (username === undefined) {
+        res.status(422).send({ error: 'No \'username\' parameter supplied.' });
+    }
 
-    matchingService.getMatchingTitles(username, link, all)
+    matchingService.getMatchingTitles(link, username)
         .then(titles => res.send(titles));
 });
 
