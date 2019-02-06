@@ -1,23 +1,28 @@
 {
-  "name": "deni-node",
+  "name": "cinejoy",
   "version": "0.0.1",
-  "description": "Node.js sample app",
+  "description": "Node.js Cinejoy Api",
   "main": "server.js",
   "dependencies": {
-    "body-parser": "^1.17.2",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "cheerio": "^1.0.0-rc.1",
-    "express": "^4.13.4",
-    "node-fetch": "^1.7.1"
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3"
   },
   "engine": {
     "node": "*",
     "npm": "*"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sjoerddo/deni.git"
+    "url": "https://github.com/sweerstra/cinejoy.git"
+  },
+  "devDependencies": {
+    "eslint": "^5.13.0"
   }
 }

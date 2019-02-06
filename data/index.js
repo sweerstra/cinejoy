@@ -1,24 +1,12 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 module.exports = {
-    getHtml(url) {
-        return fetch(url).then((res) => {
-            return res.text();
-        });
-    },
+  getParsedHtml: url => {
+    return axios.get(url).then(response => cheerio.load(response.data));
+  },
 
-    getJson(url) {
-        return fetch(url).then((res) => {
-            return res.json();
-        });
-    },
-
-    postJson(url, data) {
-        return fetch(url, {   
-            method: 'POST',
-            body: JSON.stringify(data)
-        }).then((res) => {
-            return res.json();
-        });
-    }
+  getJson: url => {
+    return axios.get(url).then(response => response.data);
+  },
 };
