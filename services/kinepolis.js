@@ -1,5 +1,6 @@
 const request = require('../data');
-const { sortByDate } = require('../utils/date');
+const { stringToDefaultDateString } = require('../utils/date');
+const { sortByDate, removeDuplicates } = require('../utils/array');
 const BRAND_NAME = 'kinepolis';
 
 exports.getCinemas = async () => {
@@ -21,9 +22,8 @@ exports.getCinemas = async () => {
     }).get();
 };
 
-exports.getAvailableMoviesForCinema = async cinema => {
-  const url = `https://kinepolis.nl/kinepolis_movie_filter/load-content/presales/${cinema}/all`;
-
+exports.getAvailableMoviesForCinema = async (cinema = 'breda') => {
+  const url = `https://kinepolis.nl/kinepolis_movie_filter/load-content/presales/${cinema.toUpperCase()}/all`;
   const appendableMovieLink = 'https://kinepolis.nl/films/';
   const appendablePosterLink = 'https://cdn2.kinepolis.com/sites/kinepolis.nl/files/styles/kinepolis_filter_movie_poster/public/posters/';
 
@@ -31,6 +31,7 @@ exports.getAvailableMoviesForCinema = async cinema => {
   const data = json[4].list;
 
   return Object.values(data).map(({ title, data }) => {
+    title = title.trim();
     const image = data.poster
       ? appendablePosterLink + Object.values(data.poster)[0].filename
       : null;
@@ -45,12 +46,14 @@ exports.getAvailableMoviesForCinema = async cinema => {
   });
 };
 
-exports.getAllAvailableMovies = () => {
-  return exports.getAvailableMoviesForCinema('BREDA');
+exports.getAllAvailableMovies = async () => {
+  const movies = await exports.getAvailableMoviesForCinema('breda');
+
+  return removeDuplicates(movies, 'title');
 };
 
-exports.getExpectedMoviesForCinema = async cinema => {
-  const url = `https://kinepolis.nl/kinepolis_movie_filter/load-content/coming/${cinema}/all`;
+exports.getExpectedMoviesForCinema = async (cinema = 'breda') => {
+  const url = `https://kinepolis.nl/kinepolis_movie_filter/load-content/coming/${cinema.toUpperCase()}/all`;
 
   const appendableMovieLink = 'https://kinepolis.nl/films/';
   const appendablePosterLink = 'https://cdn2.kinepolis.com/sites/kinepolis.nl/files/styles/kinepolis_filter_movie_poster/public/posters/';
@@ -69,7 +72,7 @@ exports.getExpectedMoviesForCinema = async cinema => {
       title,
       link: appendableMovieLink + getLinkForTitle(title),
       image,
-      release: data.release_date,
+      release: stringToDefaultDateString(data.release_date),
       duration: parseFloat(data.length)
     });
   });
@@ -77,8 +80,10 @@ exports.getExpectedMoviesForCinema = async cinema => {
   return sortByDate(movies, m => m.release);
 };
 
-exports.getAllExpectedMovies = () => {
-  return exports.getExpectedMoviesForCinema('breda');
+exports.getAllExpectedMovies = async () => {
+  const movies = await exports.getExpectedMoviesForCinema('breda');
+
+  return removeDuplicates(movies, 'title');
 };
 
 exports.getAvailableCinemasForMovie = async url => {

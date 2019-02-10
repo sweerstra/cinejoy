@@ -16,13 +16,16 @@
     "npm": "*"
   },
   "scripts": {
-    "start": "node server"
+    "start": "node server",
+    "test": "./node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/sweerstra/cinejoy.git"
   },
   "devDependencies": {
-    "eslint": "^5.13.0"
+    "chai": "*",
+    "eslint": "^5.13.0",
+    "mocha": "*"
   }
 }

@@ -1,11 +1,11 @@
-const pathe = require('./pathe');
 const euroscoop = require('./euroscoop');
 const kinepolis = require('./kinepolis');
+const pathe = require('./pathe');
 
 const services = {
-  pathe,
   euroscoop,
-  kinepolis
+  kinepolis,
+  pathe
 };
 
 exports.getBrandNames = () => {
@@ -26,7 +26,7 @@ exports.getBrandService = name => {
   return services[name];
 };
 
-exports.getPredicateResultsForBrands = (brands, predicate) => {
+exports.getServiceResultsForBrands = (brands, predicate) => {
   const results = [];
 
   brands.forEach(brand => {

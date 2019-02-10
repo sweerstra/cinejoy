@@ -1,37 +1,29 @@
-const { getPredicateResultsForBrands } = require('../services/factory');
+const { getServiceResultsForBrands } = require('../services/factory');
+const { obtainTitlesFromConfiguration } = require('../services/titles');
+const { sortByDate } = require('../utils/array');
+const { refineTitle } = require('../utils/movie');
 
 exports.getAvailableMoviesForBrands = async (req, res) => {
-  const brands = req.params.brands.split(',');
-
-  if (!brands) {
-    return res.status(422).send({ error: 'No brand parameter was supplied' });
-  }
+  const { brands } = req;
 
   const movies = await getAllAvailableMovies(brands);
 
   res.json(movies);
 };
 
-exports.getMoviesForCinema = async (req, res) => {
+exports.getAvailableMoviesForCinema = async (req, res) => {
   const { cinema } = req.params;
 
-  if (!cinema) {
-    return res.status(422).send({ error: 'No cinema parameter was supplied' });
-  }
-
   const movies = await req.brandService.getAvailableMoviesForCinema(cinema);
+
   res.json(movies);
 };
 
-
 exports.getExpectedMoviesForBrands = async (req, res) => {
-  const brands = req.params.brands.split(',');
+  const { brands } = req;
+  const { sort } = req.query;
 
-  if (!brands) {
-    return res.status(422).send({ error: 'No brand parameter was supplied' });
-  }
-
-  const movies = await getAllExpectedMovies(brands);
+  const movies = await getAllExpectedMovies(brands, sort);
 
   res.json(movies);
 };
@@ -39,63 +31,88 @@ exports.getExpectedMoviesForBrands = async (req, res) => {
 exports.getExpectedMoviesForCinema = async (req, res) => {
   const { cinema } = req.params;
 
-  if (!cinema) {
-    return res.status(422).send({ error: 'No cinema parameter was supplied' });
-  }
-
   const movies = await req.brandService.getExpectedMoviesForCinema(cinema);
 
   res.json(movies);
 };
 
-async function getAllAvailableMovies(brands) {
-  const moviePromises = getPredicateResultsForBrands(brands, service => service.getAllAvailableMovies());
-  const movieArraysOfBrands = await Promise.all(moviePromises);
+exports.compareMoviesWithTitlesForBrands = async (req, res) => {
+  const { brands } = req;
+  const { type } = req.params;
+  const validTypes = ['available', 'expected'];
 
-  return mergeMoviesOnTitle([].concat(...movieArraysOfBrands));
+  try {
+    const titles = await obtainTitlesFromConfiguration(req.body);
+
+    if (!validTypes.includes(type)) {
+      return res.status(422).send({
+        error: `Type parameter supplied is not valid, use: [${validTypes.join(', ')}]`
+      });
+    }
+
+    const movies = type === 'expected'
+      ? await getAllExpectedMovies(brands, 'ascending')
+      : await getAllAvailableMovies(brands);
+
+    res.json(filterMoviesByTitles(movies, titles));
+  } catch (e) {
+    return res.status(422).send({ error: e.message });
+  }
+};
+
+async function getAllAvailableMovies(brands) {
+  const availableMoviePromises = getServiceResultsForBrands(
+    brands,
+    service => service.getAllAvailableMovies()
+  );
+
+  return mergeMoviesOnTitle([].concat(...await Promise.all(availableMoviePromises)));
 }
 
-async function getAllExpectedMovies(brands) {
-  const moviePromises = getPredicateResultsForBrands(brands, service => service.getAllExpectedMovies());
-  const movieArraysOfBrands = await Promise.all(moviePromises);
+async function getAllExpectedMovies(brands, sort) {
+  const expectedMoviePromises = getServiceResultsForBrands(
+    brands,
+    service => service.getAllExpectedMovies()
+  );
 
-  return mergeMoviesOnTitle([].concat(...movieArraysOfBrands));
+  const expectedMovies = mergeMoviesOnTitle([].concat(...await Promise.all(expectedMoviePromises)));
+
+  if (sort) {
+    const sortAscending = !sort.includes('desc');
+    return sortByDate(expectedMovies, m => m.release, sortAscending);
+  }
+
+  return expectedMovies;
 }
 
 function mergeMoviesOnTitle(movies) {
   const result = new Map();
 
   movies.forEach(movie => {
-    const title = handleTitle(movie.title);
-    const { brand, link, image } = movie;
+    const title = refineTitle(movie.title);
+    const key = title.toLowerCase();
 
-    if (result.has(title)) {
-      const current = result.get(title);
-      current.available.push({ brand, link });
-      result.set(title, current);
+    const { brand, link, image, release } = movie;
+    const cinema = { name: brand, link };
+
+    if (result.has(key)) {
+      const current = result.get(key);
+      current.cinemas.push(cinema);
+      result.set(key, current);
     } else {
-      const available = [{ brand, link }];
-      result.set(title, { title, image, available });
+      const cinemas = [cinema];
+      result.set(key, { title, image, release, cinemas });
     }
   });
 
   return Array.from(result.values());
 }
 
-function handleTitle(title) {
-  const replacements = [
-    ['Nederlandse Versie', 'NL'],
-    ['Originele Versie', 'OV'],
-    ['NL$', '(NL)'],
-    ['OV$', '(OV)'],
-    ['3D$', '(3D)']
-  ];
-
-  for (const [original, replacement] of replacements) {
-    const regex = new RegExp(original, 'gi');
-    title = title.replace(regex, replacement);
-  }
-
-  return title;
+function filterMoviesByTitles(movies, titles) {
+  return movies.filter(movie => {
+    return titles.some(title => {
+      return movie.title.toLowerCase().includes(title.toLowerCase());
+    });
+  });
 }
 

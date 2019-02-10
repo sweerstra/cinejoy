@@ -1,13 +1,10 @@
-const { getBrandNames, getPredicateResultsForBrands } = require('../services/factory');
+const { getServiceResultsForBrands } = require('../services/factory');
 
 exports.getCinemas = async (req, res) => {
-  let { brands } = req.params;
-  brands = brands ? brands.split(',') : getBrandNames();
+  const { brands } = req;
 
-  const cinemaPromises = getPredicateResultsForBrands(brands, service => service.getCinemas());
-
-  const cinemaArrays = await Promise.all(cinemaPromises);
-  const cinemas = [].concat(...cinemaArrays);
+  const cinemaPromises = getServiceResultsForBrands(brands, service => service.getCinemas());
+  const cinemas = [].concat(...await Promise.all(cinemaPromises));
 
   res.json(cinemas);
 };
@@ -16,7 +13,7 @@ exports.getAvailableCinemasForMovie = async (req, res) => {
   const { url } = req.query;
 
   if (!url) {
-    return res.status(422).send({ error: 'No url parameter was supplied in query' });
+    return res.status(422).send({ error: 'No url query parameter was supplied' });
   }
 
   const cinemas = await req.brandService.getAvailableCinemasForMovie(url);

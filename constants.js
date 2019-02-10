@@ -1,14 +1,3 @@
-const pathe = require('./services/pathe');
-
-exports.getPatheIds = () => {
-  return pathe.getCinemas().reduce((result, { id, title }) => {
-    const [, ...parts] = title.split(' ');
-    title = parts.map(w => w.toLowerCase()).join(' ');
-    result[title] = id;
-    return result;
-  }, {});
-};
-
 exports.MonthNumbers = {
   januari: '01',
   februari: '02',

@@ -33,6 +33,11 @@
       },
       {
         "blankLine": "always",
+        "prev": "if",
+        "next": "*"
+      },
+      {
+        "blankLine": "always",
         "prev": "*",
         "next": "try"
       }
