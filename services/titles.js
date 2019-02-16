@@ -47,5 +47,5 @@ function getInvalidParameters(obj, params) {
 }
 
 function missingParameterError(name, ...parameters) {
-  return new Error(`There are missing configuration parameters in the ${name} object: [${parameters.join(', ')}]`);
+  return new Error(`Missing or invalid configuration parameters in ${name} object: [${parameters.join(', ')}]`);
 }

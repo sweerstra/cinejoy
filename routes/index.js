@@ -20,5 +20,6 @@ router.post('/movies/:type/:brands/compare', validateBrands, catchErrors(moviesC
 router.get('/schedule/:brand/movie/:cinemaIds', passAlongBrandService, catchErrors(scheduleController.getScheduleForMovie));
 
 router.get('/letterboxd/:username/watchlist', catchErrors(dataController.getLetterboxdTitlesByUsername));
+router.get('/rottentomatoes/:movie/scores', catchErrors(dataController.getRottenTomatoesScoresForMovie));
 
 module.exports = router;

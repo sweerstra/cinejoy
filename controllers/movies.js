@@ -46,7 +46,7 @@ exports.compareMoviesWithTitlesForBrands = async (req, res) => {
 
     if (!validTypes.includes(type)) {
       return res.status(422).send({
-        error: `Type parameter supplied is not valid, use: [${validTypes.join(', ')}]`
+        error: `Type parameter supplied is not valid, available: [${validTypes.join(', ')}]`
       });
     }
 
