@@ -1,5 +1,6 @@
+const urlParser = require('url');
 const request = require('../data');
-const { stringToDefaultDateString } = require('../utils/date');
+const { dateToNumericDateString, dateToLongDateString, dateToTimeString } = require('../utils/date');
 const { sortByDate, removeDuplicates } = require('../utils/array');
 const BRAND_NAME = 'kinepolis';
 
@@ -72,7 +73,7 @@ exports.getExpectedMoviesForCinema = async (cinema = 'breda') => {
       title,
       link: appendableMovieLink + getLinkForTitle(title),
       image,
-      release: stringToDefaultDateString(data.release_date),
+      release: dateToNumericDateString(new Date(data.release_date)),
       duration: parseFloat(data.length)
     });
   });
@@ -103,6 +104,59 @@ exports.getAvailableCinemasForMovie = async url => {
     return [];
   }
 };
+
+exports.getScheduleForMovie = async (movieUrl, cinemaIds) => {
+  const html = await request.getParsedHtml(movieUrl);
+
+  const script = html('script[type="application/ld+json"]');
+  const scheduleData = JSON.parse(script.html())['@graph'];
+
+  const cinemas = scheduleData
+    .filter(item => item['@type'] === 'MovieTheater')
+    .map(({ ['@id']: urlId, name, url }) => ({ urlId, id: getCinemaIdFromUrl(url), name, url }));
+
+  function findCinemaByUrlId(id) {
+    return cinemas.find(cinema => cinema.urlId === id);
+  }
+
+  let screenings = scheduleData
+    .filter(item => item['@type'] === 'screeningEvent')
+    .map(screening => {
+      const date = new Date(screening.startDate);
+      const time = dateToTimeString(date);
+      const day = dateToLongDateString(date);
+      const cinema = findCinemaByUrlId(screening.location['@id']);
+      const { url, videoFormat } = screening;
+      return { day, time, cinema, url, videoFormat };
+    });
+
+  if (cinemaIds) {
+    screenings = screenings.filter(screening => cinemaIds.includes(screening.cinema.id));
+  }
+
+  return Object.values(
+    screenings.reduce((result, { day, time: begin, cinema, url, videoFormat: label }) => {
+      const screening = { begin, cinema, url, label };
+      screening.brand = BRAND_NAME;
+
+      if (result[day]) {
+        result[day].schedule.push(screening);
+      } else {
+        result[day] = { day, schedule: [screening] };
+      }
+
+      return result;
+    }, {})
+  );
+};
+
+function getCinemaIdFromUrl(uri) {
+  const parsedUrl = urlParser.parse(uri);
+  const paths = parsedUrl.pathname.split('/');
+
+  return paths[2];
+}
+
 
 function getLinkForTitle(title) {
   return title.toLowerCase().split(/[\s:]+/).join('-');

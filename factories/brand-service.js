@@ -1,6 +1,6 @@
-const euroscoop = require('./euroscoop');
-const kinepolis = require('./kinepolis');
-const pathe = require('./pathe');
+const euroscoop = require('../services/euroscoop');
+const kinepolis = require('../services/kinepolis');
+const pathe = require('../services/pathe');
 
 const services = {
   euroscoop,
@@ -36,7 +36,7 @@ exports.getServiceResultsForBrands = (brands, predicate) => {
       return console.warn(`Service for ${brand} was not found`);
     }
 
-    results.push(predicate(service));
+    results.push(predicate(service, brand));
   });
 
   return results;

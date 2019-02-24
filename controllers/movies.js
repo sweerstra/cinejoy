@@ -1,4 +1,4 @@
-const { getServiceResultsForBrands } = require('../services/factory');
+const { getServiceResultsForBrands } = require('../factories/brand-service');
 const { obtainTitlesFromConfiguration } = require('../services/titles');
 const { sortByDate } = require('../utils/array');
 const { refineTitle } = require('../utils/movie');
@@ -86,26 +86,23 @@ async function getAllExpectedMovies(brands, sort) {
 }
 
 function mergeMoviesOnTitle(movies) {
-  const result = new Map();
+  return Object.values(
+    movies.reduce((result, movie) => {
+      const title = refineTitle(movie.title);
+      const key = title.toLowerCase();
 
-  movies.forEach(movie => {
-    const title = refineTitle(movie.title);
-    const key = title.toLowerCase();
+      const { brand, link, image, duration, release } = movie;
+      const cinema = { brand, link };
 
-    const { brand, link, image, release } = movie;
-    const cinema = { name: brand, link };
+      if (result[key]) {
+        result[key].cinemas.push(cinema);
+      } else {
+        result[key] = { title, image, duration, release, cinemas: [cinema] };
+      }
 
-    if (result.has(key)) {
-      const current = result.get(key);
-      current.cinemas.push(cinema);
-      result.set(key, current);
-    } else {
-      const cinemas = [cinema];
-      result.set(key, { title, image, release, cinemas });
-    }
-  });
-
-  return Array.from(result.values());
+      return result;
+    }, {})
+  );
 }
 
 function filterMoviesByTitles(movies, titles) {

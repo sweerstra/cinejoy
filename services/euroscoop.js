@@ -1,11 +1,10 @@
 const request = require('../data');
 const { MonthNumbers } = require('../constants');
 const BRAND_NAME = 'euroscoop';
+const WEBSITE_URL = 'https://www.euroscoop.nl';
 
 exports.getCinemas = async () => {
-  const url = 'https://www.euroscoop.nl';
-
-  const html = await request.getParsedHtml(url);
+  const html = await request.getParsedHtml(WEBSITE_URL);
   const cinemasContainer = html('.stretch-list');
 
   return cinemasContainer
@@ -26,13 +25,11 @@ exports.getAvailableMoviesForCinema = async cinema => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.euroscoop.nl';
-
     return html('.instafilta-target').map(function () {
       const item = html(this);
       const title = item.find('h1').text();
-      const link = appendableLink + item.find('a').attr('href');
-      const image = appendableLink + item.find('img').attr('src');
+      const link = WEBSITE_URL + item.find('a').attr('href');
+      const image = WEBSITE_URL + item.find('img').attr('src');
       const durationString = item.find('.duration-type i').text().split(' ')[0];
       const duration = parseFloat(durationString.split(' ')[0]);
 
@@ -54,13 +51,11 @@ exports.getExpectedMoviesForCinema = async cinema => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.euroscoop.nl';
-
     return html('.instafilta-target').map(function () {
       const item = html(this);
       const title = item.find('h1').text();
-      const link = appendableLink + item.find('a').attr('href');
-      const image = appendableLink + item.find('img').attr('src');
+      const link = WEBSITE_URL + item.find('a').attr('href');
+      const image = WEBSITE_URL + item.find('img').attr('src');
       const release = parseDateString(item.find('.expected').text());
 
       return { brand: BRAND_NAME, title, link, image, release };
@@ -73,6 +68,41 @@ exports.getExpectedMoviesForCinema = async cinema => {
 
 exports.getAllExpectedMovies = () => {
   return exports.getExpectedMoviesForCinema('tilburg');
+};
+
+exports.getScheduleForMovie = async movieUrl => {
+  const html = await request.getParsedHtml(movieUrl);
+
+  let scheduleData = null;
+
+  html('script').each(function () {
+    const script = html(this);
+    const data = script.html();
+
+    if (data.includes('scheduleData')) {
+      scheduleData = JSON.parse(data.replace('var scheduleData = ', '').slice(0, -1));
+    }
+  });
+
+  if (!scheduleData) {
+    throw new Error('No schedule data found');
+  }
+
+  return scheduleData.map(item => {
+    const schedule = [];
+
+    item.timeslots.forEach((slot, index) => {
+      if (item.active[index]) {
+        schedule.push({
+          brand: BRAND_NAME,
+          begin: slot,
+          link: WEBSITE_URL + item.links[index]
+        });
+      }
+    });
+
+    return { day: item.name, schedule };
+  });
 };
 
 function parseDateString(str) {

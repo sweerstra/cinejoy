@@ -1,6 +1,6 @@
-const { getBrandNames, getBrandService } = require('../services/factory');
+const { getBrandNames, getBrandService } = require('../factories/brand-service');
 
-exports.passAlongBrandService = (req, res, next) => {
+exports.withBrandService = (req, res, next) => {
   const { brand } = req.params;
 
   if (brand === undefined) {

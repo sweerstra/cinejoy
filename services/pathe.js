@@ -1,7 +1,9 @@
 const urlParser = require('url');
 const { MonthNumbers } = require('../constants');
 const request = require('../data');
+const { dateToLongDateString } = require('../utils/date');
 const BRAND_NAME = 'pathe';
+const WEBSITE_URL = 'https://www.pathe.nl';
 
 exports.getCinemas = async () => {
   const url = 'https://www.pathe.nl/bioscoopagenda';
@@ -27,12 +29,10 @@ exports.getAvailableMoviesForCinema = async cinema => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.pathe.nl';
-
     return html('#NowPlaying').find('.poster-carousel__item').map(function () {
       const item = html(this);
       const title = item.find('.poster__label').text();
-      const link = appendableLink + item.find('a').attr('href');
+      const link = WEBSITE_URL + item.find('a').attr('href');
       const image = item.find('img').attr('data-lazy');
 
       return { brand: BRAND_NAME, title, link, image };
@@ -49,12 +49,10 @@ exports.getAllAvailableMovies = async () => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.pathe.nl';
-
     return html('.poster').map(function () {
       const item = html(this);
       const title = item.attr('title');
-      const link = appendableLink + item.attr('href');
+      const link = WEBSITE_URL + item.attr('href');
       const image = item.find('img').attr('src');
 
       return { brand: BRAND_NAME, title, link, image };
@@ -71,14 +69,12 @@ exports.getExpectedMoviesForCinema = async cinema => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.pathe.nl';
-
     return html('#ComingSoon').find('.poster-carousel__item').map(function () {
       const item = html(this);
       const title = item.find('.poster__label').text();
-      const link = appendableLink + item.find('a').attr('href');
+      const link = WEBSITE_URL + item.find('a').attr('href');
       let image = item.find('img').attr('data-lazy');
-      image = image.includes('poster_missing.png') ? appendableLink + image : image;
+      image = image.includes('poster_missing.png') ? WEBSITE_URL + image : image;
       const release = parseDateString(item.find('.poster__sub').text());
 
       return { brand: BRAND_NAME, title, link, image, release };
@@ -95,12 +91,12 @@ exports.getAllExpectedMovies = async () => {
   try {
     const html = await request.getParsedHtml(url);
 
-    const appendableLink = 'https://www.pathe.nl';
+    const WEBSITE_URL = 'https://www.pathe.nl';
 
     return html('.poster').map(function () {
       const item = html(this);
       const title = item.attr('title');
-      const link = appendableLink + item.attr('href');
+      const link = WEBSITE_URL + item.attr('href');
       const image = item.find('img').attr('src');
       const release = parseDateString(item.find('.poster__sub').text());
 
@@ -128,19 +124,23 @@ exports.getAvailableCinemasForMovie = async url => {
   }
 };
 
-exports.getScheduleForMovieAndCinemas = async (movieUrl, cinemaIds) => {
+exports.getScheduleForMovie = async (movieUrl, cinemaIds) => {
   const movieId = getMovieIdFromUrl(movieUrl);
+
+  if (!cinemaIds) {
+    throw new Error('Pathé schedule requires one or more cinema ids');
+  }
+
   const cinemasQuery = cinemaIds.map(id => `cinemas=${id}&`).join('');
   const url = `https://www.pathe.nl/film/${movieId}/agenda?${cinemasQuery}projection=&special=&hideAllTicketsLink=False`;
 
   const html = await request.getParsedHtml(url);
 
-  const appendableLink = 'https://www.pathe.nl';
-
   return html('.schedule__section').map(function () {
     const item = html(this);
 
-    const day = item.find('.schedule__day').text();
+    let day = item.find('.schedule__day').text();
+    day = day.toLowerCase() === 'vandaag' ? dateToLongDateString(new Date()) : day;
 
     const schedule = item.find('.js-schedule-location').map(function () {
       const cinemaContainer = html(this);
@@ -150,17 +150,16 @@ exports.getScheduleForMovieAndCinemas = async (movieUrl, cinemaIds) => {
         name: cinemaContainer.find('.schedule__location').text()
       };
 
-      const times = cinemaContainer.find('.schedule__container a').map(function () {
+      return cinemaContainer.find('.schedule__container a').map(function () {
         const anchor = html(this);
         const begin = anchor.find('.schedule-time__start').text();
         const end = anchor.find('.schedule-time__end').text();
         const label = anchor.find('.schedule-time__label').text().trim();
-        const link = appendableLink + anchor.attr('data-href');
+        const link = WEBSITE_URL + anchor.attr('data-href');
 
-        return { begin, end, label, link };
+        return { brand: BRAND_NAME, begin, end, label, link, cinema };
       }).get();
 
-      return { cinema, times };
     }).get();
 
     return { day, schedule };

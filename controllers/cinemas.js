@@ -1,4 +1,4 @@
-const { getServiceResultsForBrands } = require('../services/factory');
+const { getServiceResultsForBrands } = require('../factories/brand-service');
 
 exports.getCinemas = async (req, res) => {
   const { brands } = req;

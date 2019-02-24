@@ -1,15 +1,38 @@
-exports.stringToDefaultDateString = str => {
-  const date = new Date(str);
+const { WeekDays, MonthNames } = require('../constants');
 
+exports.dateToNumericDateString = date => {
   if (!isValidDate(date)) {
     return null;
   }
 
-  const day = formatDateDigit(date.getDate());
-  const month = formatDateDigit(date.getUTCMonth() + 1);
-  const year = date.getFullYear();
+  return date.toLocaleDateString('nl-NL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
 
-  return `${month}-${day}-${year}`;
+exports.dateToLongDateString = date => {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  const weekday = WeekDays[date.getDay()];
+  const day = date.getDate();
+  const month = MonthNames[date.getMonth() + 1];
+
+  return `${weekday} ${day} ${month}`;
+};
+
+exports.dateToTimeString = date => {
+  if (!isValidDate(date)) {
+    return null;
+  }
+
+  return date.toLocaleTimeString('nl-NL', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 };
 
 function isValidDate(date) {

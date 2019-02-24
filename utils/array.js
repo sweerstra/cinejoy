@@ -19,6 +19,18 @@ exports.sortByDate = (arr, predicate, ascending = true) => {
     : arr.sort((a, b) => new Date(predicate(b)) - new Date(predicate(a)));
 };
 
+exports.sortByTime = (arr, predicate, ascending = true) => {
+  return ascending
+    ? arr.sort((a, b) => convertTimeToNumber(predicate(a)) - convertTimeToNumber(predicate(b)))
+    : arr.sort((a, b) => convertTimeToNumber(predicate(b)) - convertTimeToNumber(predicate(a)));
+};
+
+function convertTimeToNumber(time) {
+  const indicator = parseFloat(time.substr(0, 2));
+  time = (indicator < 3 ? '3' : time.charAt(0)) + time.substr(1);
+  return parseFloat(time.replace(':', ''));
+}
+
 /**
  * Remove duplicates from an array of objects in javascript
  * @param arr - Array of objects
