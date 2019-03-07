@@ -2,7 +2,7 @@
   "name": "cinejoy",
   "version": "0.0.1",
   "description": "Node.js Cinejoy Api",
-  "main": "server.js",
+  "primary": "server.js",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",

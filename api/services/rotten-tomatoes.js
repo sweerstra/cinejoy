@@ -9,30 +9,32 @@ exports.getScores = async title => {
 
   const url = `https://www.rottentomatoes.com/m/${refinedtitle}`;
 
+  console.log(url);
+
   try {
     const html = await request.getParsedHtml(url);
 
-    const panel = html('#scorePanel');
+    const panel = html('#js-tomatometer-overlay');
+
+    console.log(panel.html());
 
     const [
-      criticsScore,
       criticsAverage,
       criticsCount,
       criticsFreshCount,
       criticsRottenCount,
-      topCriticsScore,
-      topCriticsAverage,
-      topCriticsCount,
-      topCriticsFreshCount,
-      topCriticsRottenCount,
-      audienceScore,
       audienceAverage,
-      audienceCount
     ] = panel
-      .find('.meter-value, #scoreStats div, .audience-info div')
+      .find('.mop-ratings-wrap__score-details span[id]')
       .map(function () {
-        return html(this).text().replace(/[^\d.%/]/g, '');
+        console.log(html(this).html());
+        return html(this).text().trim();
       }).get();
+
+    const criticsScore = panel.find('#js-popover-tomatometer-score').text().trim();
+    const audienceScore = panel.find('.mop-ratings-wrap__percentage--audience').text().trim();
+
+    const audienceCount = panel.find('.mop-ratings-wrap__review-totals small').next().text().trim();
 
     return {
       critics: {
@@ -41,13 +43,6 @@ exports.getScores = async title => {
         count: criticsCount,
         freshCount: criticsFreshCount,
         rottenCount: criticsRottenCount
-      },
-      topCritics: {
-        score: topCriticsScore,
-        average: topCriticsAverage,
-        count: topCriticsCount,
-        freshCount: topCriticsFreshCount,
-        rottenCount: topCriticsRottenCount
       },
       audience: {
         score: audienceScore,

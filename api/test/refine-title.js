@@ -21,6 +21,10 @@ it('Should fix notations in front of title with abbreviations', () => {
   assert.equal(refineTitle('OSCAR NIGHT: The Favourite'), 'The Favourite');
   assert.equal(refineTitle('Oscar Night: Green Book'), 'Green Book');
   assert.equal(refineTitle('OSCAR NIGHT: Green Book'), 'Green Book');
+  assert.equal(refineTitle('Ladies Night: A Simple Favor'), 'A Simple Favor');
+  assert.equal(refineTitle('LADIES NIGHT: A Simple Favor'), 'A Simple Favor');
+  assert.equal(refineTitle('Voorpremière: The Beach Bum'), 'The Beach Bum');
+  assert.equal(refineTitle('Voorpremiere: The Beach Bum'), 'The Beach Bum');
 });
 
 it('Remove unnecessary notations at the end of title', () => {

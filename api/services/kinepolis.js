@@ -68,6 +68,8 @@ exports.getExpectedMoviesForCinema = async (cinema = 'breda') => {
       ? appendablePosterLink + Object.values(data.poster)[0].filename
       : null;
 
+    console.log(dateToNumericDateString(new Date(data.release_date)));
+
     return ({
       brand: BRAND_NAME,
       title,

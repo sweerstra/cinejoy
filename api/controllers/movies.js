@@ -1,6 +1,6 @@
 const { getServiceResultsForBrands } = require('../factories/brand-service');
 const { obtainTitlesFromConfiguration } = require('../services/titles');
-const { sortByDate } = require('../utils/array');
+const { sortByDate, groupByWeek } = require('../utils/array');
 const { refineTitle } = require('../utils/movie');
 
 exports.getAvailableMoviesForBrands = async (req, res) => {
@@ -21,9 +21,9 @@ exports.getAvailableMoviesForCinema = async (req, res) => {
 
 exports.getExpectedMoviesForBrands = async (req, res) => {
   const { brands } = req;
-  const { sort } = req.query;
+  const { sort, groupBy } = req.query;
 
-  const movies = await getAllExpectedMovies(brands, sort);
+  const movies = await getAllExpectedMovies(brands, sort, Boolean(groupBy));
 
   res.json(movies);
 };
@@ -69,17 +69,21 @@ async function getAllAvailableMovies(brands) {
   return mergeMoviesOnTitle([].concat(...await Promise.all(availableMoviePromises)));
 }
 
-async function getAllExpectedMovies(brands, sort) {
+async function getAllExpectedMovies(brands, sort, groupBy) {
   const expectedMoviePromises = getServiceResultsForBrands(
     brands,
     service => service.getAllExpectedMovies()
   );
 
-  const expectedMovies = mergeMoviesOnTitle([].concat(...await Promise.all(expectedMoviePromises)));
+  let expectedMovies = mergeMoviesOnTitle([].concat(...await Promise.all(expectedMoviePromises)));
 
   if (sort) {
     const sortAscending = !sort.includes('desc');
-    return sortByDate(expectedMovies, m => m.release, sortAscending);
+    expectedMovies = sortByDate(expectedMovies, m => m.release, sortAscending);
+  }
+
+  if (groupBy) {
+    expectedMovies = groupByWeek(expectedMovies, m => new Date(m.release));
   }
 
   return expectedMovies;
@@ -94,8 +98,16 @@ function mergeMoviesOnTitle(movies) {
       const { brand, link, image, duration, release } = movie;
       const cinema = { brand, link };
 
-      if (result[key]) {
-        result[key].cinemas.push(cinema);
+      const current = result[key];
+
+      if (current) {
+        current.cinemas.push(cinema);
+
+        // update release
+        if (!current.release && release) {
+          console.log(title, release);
+          current.release = release;
+        }
       } else {
         result[key] = { title, image, duration, release, cinemas: [cinema] };
       }

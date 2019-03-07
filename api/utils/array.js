@@ -1,3 +1,5 @@
+const { getWeekNumber } = require('./date');
+
 /**
  * Sort array by given prop
  * @param {Array} arr to sort
@@ -23,6 +25,23 @@ exports.sortByTime = (arr, predicate, ascending = true) => {
   return ascending
     ? arr.sort((a, b) => convertTimeToNumber(predicate(a)) - convertTimeToNumber(predicate(b)))
     : arr.sort((a, b) => convertTimeToNumber(predicate(b)) - convertTimeToNumber(predicate(a)));
+};
+
+exports.groupByWeek = (arr, predicate) => {
+  return arr.reduce((result, item) => {
+    const date = predicate(item);
+    const week = getWeekNumber(date);
+    const year = date.getFullYear();
+    const key = `${year}-${week}`;
+
+    if (!result[key]) {
+      result[key] = [item];
+    } else {
+      result[key].push(item);
+    }
+
+    return result;
+  }, {});
 };
 
 function convertTimeToNumber(time) {

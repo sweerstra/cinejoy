@@ -14,7 +14,9 @@ exports.refineTitle = title => {
     [/\s?3D/i, ''],
     [/\s?\([3D)]*\)/i, ''],
     [/\s?Dolby Atmos/i, ''],
-    [/Oscar Night.?\s?/i, '']
+    [/Oscar Night.?\s?/i, ''],
+    [/Ladies Night.?\s?/i, ''],
+    [/Voorpremi[èe]re.?\s?/i, ''],
   ];
 
   for (const [regex, replacement] of transforms) {
