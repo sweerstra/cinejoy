@@ -1,18 +1,11 @@
 import React from 'react';
-import { Platform } from 'react-native';
-import { Icon } from 'expo';
+import Icon from './Icon';
 
-export default function TabBarIcon({ name, color }) {
-  const iconName = Platform.OS === 'ios'
-    ? `ios-${name}`
-    : `md-${name}`;
-
+export default function TabBarIcon(props) {
   return (
-    <Icon.Ionicons
-      name={iconName}
-      size={26}
+    <Icon
+      {...props}
       style={{ marginBottom: -3 }}
-      color={color}
     />
   );
 }

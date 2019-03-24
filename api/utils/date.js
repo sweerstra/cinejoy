@@ -23,10 +23,10 @@ function dateToLongDateString(date) {
 }
 
 function dateToTimeString(date) {
-  return date.toLocaleTimeString('nl-NL', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const minutes = formatDateDigit(date.getMinutes());
+  const seconds = formatDateDigit(date.getSeconds());
+
+  return `${minutes}:${seconds}`;
 }
 
 function getWeekDays(date) {
@@ -34,18 +34,6 @@ function getWeekDays(date) {
   const start = date.getDate() - day + (day === 0 ? -6 : 1);
   const end = date.getDate() - (day - 1) + 6;
   return [resetDate(date, start), resetDate(date, end)];
-}
-
-function getWeekEndDays(date, endDate) {
-  const result = [];
-  const weekEndDate = date.getDate() - (date.getDay() - 1) + 6;
-  const startDate = resetDate(date, weekEndDate);
-
-  for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 7)) {
-    result.push(new Date(date));
-  }
-
-  return result;
 }
 
 function getWeekNumber(date) {
@@ -78,4 +66,3 @@ function formatDateDigit(digit) {
   digit = parseFloat(digit);
   return digit >= 10 ? digit.toString() : '0' + digit;
 }
-

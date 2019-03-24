@@ -37,45 +37,6 @@ export default function Input({ label, value, onChange, icon, style, ...rest }) 
   );
 }
 
-/*export default function Input({ label, value, onChange, icon, style, ...rest }) {
-  function renderInput(styles) {
-    return (
-      <TextInput
-        style={styles} // [styles.input, style]
-        onChangeText={onChange}
-        value={value}
-        {...rest}
-      />
-    );
-  }
-
-  const inputStyle = icon
-    ? [styles.iconInput, style]
-    : [styles.input, style];
-
-  if (icon) {
-    return (
-      <View style={[styles.input, styles.inputContainer, style]}>
-        {renderInput(inputStyle)}
-        <Icon
-          name={icon}
-          color={Colors.light}/>
-      </View>
-    );
-  }
-
-  if (label) {
-    return (
-      <View>
-        <Text style={styles.label}>{label}</Text>
-        {input}
-      </View>
-    );
-  }
-
-  return input;
-}*/
-
 const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',

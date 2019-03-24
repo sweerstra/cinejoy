@@ -1,7 +1,7 @@
 {
   "name": "cinejoy",
   "version": "0.0.1",
-  "description": "Node.js Cinejoy Api",
+  "description": "Express Cinejoy API",
   "primary": "server.js",
   "dependencies": {
     "axios": "^0.18.0",

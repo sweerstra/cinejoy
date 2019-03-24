@@ -12,10 +12,9 @@ exports.getCinemas = async () => {
     .map(function () {
       const item = html(this);
       const id = item.text().trim();
-      const brand = 'euroscoop';
       const title = item.attr('title');
 
-      return { id, brand, title };
+      return { id, brand: BRAND_NAME, title };
     }).get();
 };
 

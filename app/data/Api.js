@@ -1,6 +1,6 @@
 import Request from './Request';
 
-const API_URL = 'http://f458c58b.ngrok.io';
+const API_URL = 'http://76ee9e11.ngrok.io';
 
 export default {
   getAvailableMovies: brands => Request.get(`${API_URL}/movies/available/${convertBrands(brands)}`),

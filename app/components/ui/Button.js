@@ -4,7 +4,9 @@ import Colors from '../../constants/Colors';
 import { RaisedShadow } from '../../constants/Box';
 
 export default function Button({ onPress, uppercase = true, style, children, ...rest }) {
-  const text = uppercase ? children.toUpperCase() : children;
+  const content = uppercase && typeof children === 'string'
+    ? children.toUpperCase()
+    : children;
 
   return (
     <TouchableOpacity
@@ -12,7 +14,7 @@ export default function Button({ onPress, uppercase = true, style, children, ...
       onPress={onPress}
       activeOpacity={0.7}
       {...rest}>
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={styles.buttonText}>{content}</Text>
     </TouchableOpacity>
   );
 }
